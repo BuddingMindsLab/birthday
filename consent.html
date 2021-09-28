@@ -18,8 +18,14 @@
         document.getElementById("start").onclick = function() {startExp()};
 
         function startExp() {
-            if (document.getElementById('agree_checkbox').checked) {                             
-                window.location.href = "http://www.w3schools.com";
+            if (document.getElementById('agree_checkbox').checked) {  
+                const urlParams = new URLSearchParams(window.location.search);  
+                var version = urlParams.get('exp');
+                if (version == 'cells'){
+                    window.location.href = "https://run.pavlovia.org/mwoodb/cells-online";
+                } else if (version == 'bday'){
+                    window.location.href = "https://run.pavlovia.org/mwoodb/birthday-online";
+                }               
             } else {
                 alert("If you wish to participate, you must check the box next to the statement 'I agree.'");
             }
