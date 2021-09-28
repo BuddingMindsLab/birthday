@@ -5,7 +5,7 @@
 <body>
     <div id="consent" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <h1 style = "text-align: center;">Please read the participant consent form.</h1>
-        <iframe src="https://thedrsmack.com/bml_adultonly_paidorcredit_online_consent.html" width="100%" height="500px">
+        <iframe src="https://thedrsmack.com/bml_developmental_credit_online_consent.html" width="100%" height="500px">
         </iframe>
         <p>
             <label><input type="radio" name="option" id="disagree_checkbox" value="Disagree">I disagree</label>
@@ -22,9 +22,9 @@
                 const urlParams = new URLSearchParams(window.location.search);  
                 var version = urlParams.get('exp');
                 if (version == 'cells'){
-                    window.location.href = "https://run.pavlovia.org/mwoodb/cells-online";
+                    window.location.href = "https://run.pavlovia.org/mwoodb/cells-online?participant="+urlParams.get('participant');
                 } else if (version == 'bday'){
-                    window.location.href = "https://run.pavlovia.org/mwoodb/birthday-online";
+                    window.location.href = "https://run.pavlovia.org/mwoodb/birthday-online?participant="+urlParams.get('participant');
                 }               
             } else {
                 alert("If you wish to participate, you must check the box next to the statement 'I agree.'");
