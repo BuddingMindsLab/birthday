@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="jspsych-6.3.0/jspsych.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-external-html.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+
+</head>
+<body>
+<script>
+    var timeline = [];
+    var urlVar = jsPsych.data.urlVariables();
+
+    var survey_q1 = 'What general area of psychology does this study belong to?';
+    var survey_q2 = 'What type of learning task did you complete?';
+    var survey_q3 = 'What type of learning task did you complete?';
+    var survey_q4 = 'What are the two main hypotheses for the study?';
+    var survey_q5 = 'What are the independent variables of the study?';
+    var survey_q6 = 'What is the dependent variable of the study? ';
+    var questions = [{prompt: survey_q1, name: 'q1', rows: 5, columns:50, required:true},
+            {prompt: survey_q2, name: 'q2', rows: 5, columns:50, required:true},
+            {prompt: survey_q3, name: 'q3', rows: 5, columns:50, required:true},
+            {prompt: survey_q4, name: 'q4', rows: 5, columns:50, required:true},
+            {prompt: survey_q5, name: 'q5', rows: 5, columns:50, required:true},
+            {prompt: survey_q6, name: 'q6', rows: 5, columns:50, required:true}];
+
+    var debrief_page = {
+        type: 'external-html',
+        url: "./debreifing_letter.html",
+        cont_btn: "finish",            
+        data: {disp_type: 'debriefing_page'}
+    }   
+
+    var survey = {
+        type: 'survey-text',
+        preamble: 'Experiment Question and Answer',
+        questions: [questions[Math.floor(Math.random() * 6)]],
+        randomize_question_order: true,
+        data: {
+            exp_section: 'survey'
+        },
+        button_label: 'Submit'
+    }
+
+    var send_data = {
+        type: 'html-keyboard-response',
+        stimulus: 'Saving responses...',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+        on_finish: function(){
+            var survey_responses = jsPsych.data.get().filter([{exp_section: 'survey'}]);
+            var survey_data = {'phase': 'survey', 'data': survey_responses.values()};
+
+            var data = {
+                experiment: "birthday",
+                repo: "buddingmindslab.github.io",
+                subject: urlVar.participant,
+                date: Date(),
+                version: "bday",
+                data: [
+                    survey_data
+                ]
+            }
+            
+            // send data to savejs
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST','https://savejs.netlify.app/.netlify/functions/savejs');
+            xhr.setRequestHeader('Content-Type','application/json');
+            xhr.onload = function(){
+                if(xhr.status==200){
+                    var response=JSON.parse(xhr.responseText);
+                    console.log(response.success);
+                }
+                else {
+                    console.log("failed to send data");
+                }
+            };
+            xhr.send(JSON.stringify(data));
+            console.log("success sending data");
+        }
+    }
+    
+    timeline.push(debrief_page);
+    timeline.push(survey);
+    timeline.push(send_data);
+
+    // run experiment
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            window.location.href = "https://utsgpsych.sona-systems.com/webstudy_credit.aspx?experiment_id=233&credit_token=16a34d0a5f8b47d4b10d326803369e12&survey_code="+urlVar.participant;         
+        },
+    })
+</script>
+</body>
+</html>
