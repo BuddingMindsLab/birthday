@@ -15,7 +15,7 @@
 
     var survey_q1 = 'What general area of psychology does this study belong to?';
     var survey_q2 = 'What type of learning task did you complete?';
-    var survey_q3 = 'What type of learning task did you complete?';
+    var survey_q3 = 'What broad question does this study address?';
     var survey_q4 = 'What are the two main hypotheses for the study?';
     var survey_q5 = 'What are the independent variables of the study?';
     var survey_q6 = 'What is the dependent variable of the study? ';
@@ -25,6 +25,12 @@
             {prompt: survey_q4, name: 'q4', rows: 5, columns:50, required:true},
             {prompt: survey_q5, name: 'q5', rows: 5, columns:50, required:true},
             {prompt: survey_q6, name: 'q6', rows: 5, columns:50, required:true}];
+    var questions_answers = [{prompt: survey_q1, name: 'q1', rows: 5, columns:50, required:true, placeholder: 'Answer: Developmental cognitive psychology'},
+            {prompt: survey_q2, name: 'q2', rows: 5, columns:50, required:false, placeholder: 'Answer: Category learning'},
+            {prompt: survey_q3, name: 'q3', rows: 5, columns:50, required:false, placeholder: 'Answer: How do people of different ages learn about concepts differently?'},
+            {prompt: survey_q4, name: 'q4', rows: 5, columns:50, required:false, placeholder: 'Answer:  (1) Children will be slower to learn concepts based on extrinsic features than intrinsic features.\n(2) People will learn concepts faster when the feature basis and decision itself are either both extrinsic or both intrinsic, compared to when there is a mismatch.'},
+            {prompt: survey_q5, name: 'q5', rows: 5, columns:50, required:false, placeholder: 'Answer: Type of feature used for category learning (extrinsic/intrinsic), type of decision (extrinsic/intrinsic), participant age.'},
+            {prompt: survey_q6, name: 'q6', rows: 5, columns:50, required:false, placeholder: 'Answer: Number of trials to reach 80% accuracy, i.e., learning rate.'}];
 
     var debrief_page = {
         type: 'external-html',
@@ -33,10 +39,11 @@
         data: {disp_type: 'debriefing_page'}
     }   
 
+    var qnum = Math.floor(Math.random() * 6);
     var survey = {
         type: 'survey-text',
         preamble: 'Experiment Question and Answer',
-        questions: [questions[Math.floor(Math.random() * 6)]],
+        questions: [questions[qnum]],
         randomize_question_order: true,
         data: {
             exp_section: 'survey'
@@ -48,7 +55,7 @@
         type: 'html-keyboard-response',
         stimulus: 'Saving responses...',
         choices: jsPsych.NO_KEYS,
-        trial_duration: 1000,
+        trial_duration: 5000,
         on_finish: function(){
             var survey_responses = jsPsych.data.get().filter([{exp_section: 'survey'}]);
             var survey_data = {'phase': 'survey', 'data': survey_responses.values()};
@@ -82,9 +89,20 @@
         }
     }
     
+    var survey_ans = {
+        type: 'survey-text',
+        preamble: 'Experiment Question and Answer',
+        questions: [questions_answers[qnum]],
+        button_label: 'Finish',
+        on_load: function (){
+            document.getElementById('input-0').readOnly = true;
+        }
+    }
+
     timeline.push(debrief_page);
     timeline.push(survey);
     timeline.push(send_data);
+    timeline.push(survey_ans);
 
     // run experiment
     jsPsych.init({
