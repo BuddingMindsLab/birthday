@@ -108,7 +108,11 @@
     jsPsych.init({
         timeline: timeline,
         on_finish: function() {
-            window.location.href = "https://utsgpsych.sona-systems.com/webstudy_credit.aspx?experiment_id=233&credit_token=16a34d0a5f8b47d4b10d326803369e12&survey_code="+urlVar.participant;         
+            if (exp=='bday'){
+                window.location.href = "https://utsgpsych.sona-systems.com/webstudy_credit.aspx?experiment_id=233&credit_token=16a34d0a5f8b47d4b10d326803369e12&survey_code="+urlVar.participant;
+            } else if (exp=='cells'){
+                window.location.href = "https://utsgpsych.sona-systems.com/webstudy_credit.aspx?experiment_id=232&credit_token=9606aff4266245d18257f864b10c3842&survey_code="+urlVar.participant;
+            }    
         },
     })
 </script>
